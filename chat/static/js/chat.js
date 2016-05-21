@@ -23,6 +23,7 @@ const genderIcons = {
 };
 
 var smileRegex = /<img[^>]*code="([^"]+)"[^>]*>/g;
+var imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/g;
 var timePattern = /^\(\d\d:\d\d:\d\d\)\s\w+:.*&gt;&gt;&gt;\s/;
 
 var destinationUserId = null;
@@ -284,11 +285,49 @@ function sendMessage(messageContent) {
 }
 
 
+function toDataUrl(url, callback, outputFormat) {
+	var img = new Image();
+	img.crossOrigin = 'Anonymous';
+	img.onload = function () {
+		var ctx = canvas.getContext('2d');
+		var dataURL;
+		canvas.height = this.height;
+		canvas.width = this.width;
+		ctx.drawImage(this, 0, 0);
+		dataURL = canvas.toDataURL(outputFormat);
+		callback(dataURL);
+	};
+	img.src = url;
+}
+
+var imgToWait = 0;
+var imgArray = [];
+var messageContent = "";
+function finishImgProcess(base64) {
+	imgArray.push(base64);
+	imgToWait -= 1;
+	if (imgToWait == 0) {
+		sendMessage(messageContent);
+	}
+}
+
 function checkAndSendMessage(event) {
 	if (event.keyCode === 13 && !event.shiftKey) { // 13 = enter
 		event.preventDefault();
-		userMessage.innerHTML = userMessage.innerHTML.replace(smileRegex, "$1");
-		var messageContent = userMessage.textContent;
+		if (imgToWait > 0) {
+			return; // TODO what if img not loaded?
+		}
+		var innerHTML = userMessage.innerHTML.replace(smileRegex, "$1");
+		innerHTML = innerHTML.replace(imgRegex, function (el, url) {
+			imgToWait += 1;
+			toDataUrl(url, finishImgProcess);
+			return "";
+		});
+		if (imgToWait > 0) {
+			return;
+		}
+		userMessage.innerHTML = innerHTML;
+		messageContent = userMessage.textContent;
 		if (blankRegex.test(messageContent)) {
 			return;
 		}

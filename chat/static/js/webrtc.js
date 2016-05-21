@@ -1,5 +1,4 @@
 var video;
-var canvas;
 var localMediaStream = null;
 var snapshot = false;
 var isStopped = true;
@@ -34,7 +33,6 @@ onDocLoad(function () {
 
 	}
 	video = document.querySelector('video');
-	canvas = document.querySelector('canvas');
 	CssUtils.hideElement(video);
 
 });

@@ -11,6 +11,7 @@ var ajaxLoader;
 var linksRegex = /(https?:&#x2F;&#x2F;.+?(?=\s+|<br>|$))/g; /*http://anycharacter except end of text, <br> or space*/
 var replaceLinkPattern = '<a href="$1" target="_blank">$1</a>';
 var muteBtn;
+var canvas;
 const escapeMap = {
 	"&": "&amp;",
 	"<": "&lt;",
@@ -268,6 +269,7 @@ onDocLoad(function () {
 		console.warn(getDebugMessage("Ops, there's no scrollbar for firefox"));
 	}
 	growlHolder = $('growlHolder');
+	canvas = document.querySelector('canvas');
 });
 
 
