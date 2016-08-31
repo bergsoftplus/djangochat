@@ -28,6 +28,7 @@ Prepare system.
  0. Fill database with tables `python manage.py init_db`
  0. Download static content `sh download_content.sh`
  0. Place you certificate in `/etc/nginx/ssl`, you can get free one with startssl. For it start postfix service, send email validation to domain `webmaster@pychat.org` and apply verification code from `/root/Maildir/new/<<time>>`. Generate public key in `/etc/nginx/ssl/server.key` and create certificate with this key on startssl. Download the certificate from startssl and put it into `/etc/nginx/ssl/1_pychat.org_bundle.crt`
+ 0. Edit file /etc/nginx/nginx.conf according by your filesystem structure. Point `location /photo` to directory where you store images. Point `location /static` to `djangochat/chat/static` directory. Specify your domainname or host to `$host` section.
  0. Add django admin static files: `python manage.py collectstatic`
 
 Start the chat:
